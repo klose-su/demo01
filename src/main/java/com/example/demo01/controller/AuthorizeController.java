@@ -50,7 +50,7 @@ public class AuthorizeController {
             user.setToken(UUID.randomUUID().toString());
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
-            //userMapper.insert(user);
+            userMapper.insert(user);
             httpServletRequest.getSession().setAttribute("user",githubUser);
             return "redirect:/";
         } else {
