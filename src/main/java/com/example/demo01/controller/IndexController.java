@@ -1,15 +1,14 @@
 package com.example.demo01.controller;
 
-import com.example.demo01.dto.QuestionDTO;
-import com.example.demo01.mapper.QuestionMapper;
+import com.example.demo01.dto.PaginationDTO;
 import com.example.demo01.mapper.UserMapper;
-import com.example.demo01.model.Question;
 import com.example.demo01.model.User;
 import com.example.demo01.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -27,22 +26,25 @@ public class IndexController {
 
     @RequestMapping("/")
     public String index(HttpServletRequest httpServletRequest,
-                        Model model) {
+                        Model model,
+                        @RequestParam(name = "page", defaultValue = "1") Integer page,
+                        @RequestParam(name = "size", defaultValue = "5") Integer size) {
         Cookie[] cookies = httpServletRequest.getCookies();
-        if (cookies == null) return "index";
-        for (Cookie c : cookies) {
-            if (c.getName().equals("token")) {
-                String token = c.getValue();
-                User user = userMapper.findByToken(token);
-                if (user != null) {
-                    httpServletRequest.getSession().setAttribute("user", user);
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if (c.getName().equals("token")) {
+                    String token = c.getValue();
+                    User user = userMapper.findByToken(token);
+                    if (user != null) {
+                        httpServletRequest.getSession().setAttribute("user", user);
+                    }
                 }
+                break;
             }
-            break;
         }
 
-        List<QuestionDTO> questions = questionService.getList();
-        model.addAttribute("questions", questions);
+        PaginationDTO pagination = questionService.getList(page, size);
+        model.addAttribute("pagination", pagination);
 
         return "index";
     }
