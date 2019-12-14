@@ -18,30 +18,13 @@ import java.util.List;
 @Controller
 public class IndexController {
 
-    @Resource
-    UserMapper userMapper;
-
     @Autowired
     QuestionService questionService;
 
     @RequestMapping("/")
-    public String index(HttpServletRequest httpServletRequest,
-                        Model model,
+    public String index(Model model,
                         @RequestParam(name = "page", defaultValue = "1") Integer page,
                         @RequestParam(name = "size", defaultValue = "5") Integer size) {
-        Cookie[] cookies = httpServletRequest.getCookies();
-        if (cookies != null) {
-            for (Cookie c : cookies) {
-                if (c.getName().equals("token")) {
-                    String token = c.getValue();
-                    User user = userMapper.findByToken(token);
-                    if (user != null) {
-                        httpServletRequest.getSession().setAttribute("user", user);
-                    }
-                }
-                break;
-            }
-        }
 
         PaginationDTO pagination = questionService.getList(page, size);
         model.addAttribute("pagination", pagination);

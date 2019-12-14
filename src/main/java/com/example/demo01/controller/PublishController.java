@@ -1,7 +1,6 @@
 package com.example.demo01.controller;
 
 import com.example.demo01.mapper.QuestionMapper;
-import com.example.demo01.mapper.UserMapper;
 import com.example.demo01.model.Question;
 import com.example.demo01.model.User;
 import org.springframework.stereotype.Controller;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
@@ -19,9 +17,6 @@ public class PublishController {
 
     @Resource
     private QuestionMapper questionMapper;
-
-    @Resource
-    private UserMapper userMapper;
 
     @GetMapping("/publish")
     public String publish() {
@@ -52,19 +47,7 @@ public class PublishController {
             return "publish";
         }
 
-        Cookie[] cookies = httpServletRequest.getCookies();
-        User user = null;
-        if (cookies == null) return "index";
-        for (Cookie c : cookies) {
-            if (c.getName().equals("token")) {
-                String token = c.getValue();
-                user = userMapper.findByToken(token);
-                if (user != null) {
-                    httpServletRequest.getSession().setAttribute("user", user);
-                }
-            }
-            break;
-        }
+        User user = (User) httpServletRequest.getSession().getAttribute("user");
         if (user == null) {
             model.addAttribute("error","用户没登录");
             return "publish";

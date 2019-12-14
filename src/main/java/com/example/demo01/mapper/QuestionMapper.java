@@ -1,5 +1,6 @@
 package com.example.demo01.mapper;
 
+import com.example.demo01.dto.QuestionDTO;
 import com.example.demo01.model.Question;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -20,4 +21,13 @@ public interface QuestionMapper {
 
     @Select("select count(1) from questions")
     Integer count();
+
+    @Select("select * from questions where creator = #{userId} limit #{offest}, #{size}")
+    List<Question> listByUserId(@Param(value = "userId")Integer userId, @Param(value = "offest") Integer offest, @Param("size") Integer size);
+
+    @Select("select count(1) from questions where creator = #{userId}")
+    Integer countByUserId(@Param(value = "userId")Integer userId);
+
+    @Select("select * from questions where id = #{id}")
+    Question getById(@Param(value = "id")Integer id);
 }
