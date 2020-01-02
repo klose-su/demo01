@@ -1,7 +1,6 @@
 package com.example.demo01.controller;
 
 import com.example.demo01.dto.QuestionDTO;
-import com.example.demo01.mapper.QuestionMapper;
 import com.example.demo01.service.QuestionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

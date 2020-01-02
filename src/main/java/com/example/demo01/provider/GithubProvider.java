@@ -6,8 +6,6 @@ import com.example.demo01.dto.GithubUser;
 import okhttp3.*;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 
 @Component
 public class GithubProvider {
@@ -23,7 +21,6 @@ public class GithubProvider {
         try (Response response = client.newCall(request).execute()) {
             String string = response.body().string();
             String token = string.split("&")[0].split("=")[1];
-            System.out.println("s: " + string);
             return token;
         } catch (Exception e) {
             e.printStackTrace();
