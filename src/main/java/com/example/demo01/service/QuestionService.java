@@ -2,6 +2,9 @@ package com.example.demo01.service;
 
 import com.example.demo01.dto.PaginationDTO;
 import com.example.demo01.dto.QuestionDTO;
+import com.example.demo01.exception.CustomizeErrorCode;
+import com.example.demo01.exception.CustomizeException;
+import com.example.demo01.mapper.QuestionExtMapper;
 import com.example.demo01.mapper.QuestionMapper;
 import com.example.demo01.mapper.UserMapper;
 import com.example.demo01.model.Question;
@@ -20,6 +23,9 @@ public class QuestionService {
 
     @Resource
     private QuestionMapper questionMapper;
+
+    @Resource
+    private QuestionExtMapper questionExtMapper;
 
     @Resource
     private UserMapper userMapper;
@@ -107,6 +113,9 @@ public class QuestionService {
 
     public QuestionDTO getById(Integer id) {
         Question question = questionMapper.selectByPrimaryKey(id);
+        if (question == null) {
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question, questionDTO);
         User user = userMapper.selectByPrimaryKey(question.getCreator());
@@ -129,7 +138,17 @@ public class QuestionService {
             QuestionExample questionExample = new QuestionExample();
             questionExample.createCriteria()
                     .andIdEqualTo(question.getId());
-            questionMapper.updateByExampleSelective(updateQuestion, questionExample);
+            int update = questionMapper.updateByExampleSelective(updateQuestion, questionExample);
+            if (update != 1) {
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
         }
+    }
+
+    public void incView(Integer id) {
+        Question question = new Question();
+        question.setId(id);
+        question.setViewCount(1);
+        questionExtMapper.incView(question);
     }
 }
